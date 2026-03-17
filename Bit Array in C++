@@ -1,0 +1,37 @@
+#include <iostream>
+#include <vector>
+#include <bitset>
+
+using namespace std;
+
+// 2^31 bits = 256 MB. 
+// We use 'static' or move it outside main to avoid stack overflow.
+static bitset<2147483648> seen;
+
+int main() {
+    unsigned int N, S, P, Q;
+    if (!(cin >> N >> S >> P >> Q)) return 0;
+
+    const unsigned int MASK = 0x7FFFFFFF; // Equivalent to modulo 2^31
+    
+    unsigned int current = S & MASK;
+    unsigned int count = 0;
+
+    for (unsigned int i = 0; i < N; ++i) {
+        if (!seen.test(current)) {
+            seen.set(current);
+            count++;
+        } else {
+            // Once we hit a number we've seen before, the sequence 
+            // will cycle, and no new distinct numbers will appear.
+            break;
+        }
+        
+        // Calculate next: a[i] = (a[i-1] * P + Q) % 2^31
+        current = (current * P + Q) & MASK;
+    }
+
+    cout << count << endl;
+
+    return 0;
+}
